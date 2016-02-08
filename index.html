@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+
+	<!--
+		Hello random person reading the source code!
+
+		Sorry, but I'm not really the type of person that writes a lot of comments.
+		Er...so have fun I guess.
+
+		Feel free to ask me any questions if you wanna learn anything.
+			
+		~ SumRndmDde
+	-->
+
+	<script>
+		//Function Taken from RPG Maker MV rpg_objects.js file.
+		//Game_Action.prototype.applyVariance
+		function lowVariance(damage, variance) 
+		{
+    		var amp = Math.floor(Math.max(Math.abs(damage) * variance / 100, 0));
+    		var v = -amp;
+    		return damage >= 0 ? damage + v : damage - v;
+		}
+
+		//Function Taken from RPG Maker MV rpg_objects.js file.
+		//Game_Action.prototype.applyVariance
+		function highVariance(damage, variance) 
+		{
+    		var amp = Math.floor(Math.max(Math.abs(damage) * variance / 100, 0));
+    		var v = amp;
+    		return damage >= 0 ? damage + v : damage - v;
+		}
+
+		function getResults()
+		{
+			var a = [];
+			a.atk = Number(document.getElementById("aatk").value);
+			a.mat = Number(document.getElementById("amat").value);
+
+			if(document.getElementById('aspd'))
+			{
+				a.mhp = Number(document.getElementById("amhp").value);
+				a.mmp = Number(document.getElementById("ammp").value);
+				a.def = Number(document.getElementById("adef").value);
+				a.mdf = Number(document.getElementById("amdf").value);
+				a.agi = Number(document.getElementById("aspd").value);
+				a.luk = Number(document.getElementById("aluk").value);
+				a.level = Number(document.getElementById("alvl").value);
+			}
+			else if(localStorage.aspd)
+			{
+				a.mhp = Number(localStorage.amhp);
+				a.mmp = Number(localStorage.ammp);
+				a.def = Number(localStorage.adef);
+				a.mdf = Number(localStorage.amdf);
+				a.agi = Number(localStorage.aspd);
+				a.luk = Number(localStorage.aluk);
+				a.level = Number(localStorage.alvl);
+			}
+			else
+			{
+				a.mhp = 500;
+				a.mmp = 250;
+				a.def = 50;
+				a.mdf = 50;
+				a.agi = 50;
+				a.luk = 50;
+				a.level = 1;
+			}
+
+			var b = [];
+			b.mhp = Number(document.getElementById("bmhp").value);
+			b.def = Number(document.getElementById("bdef").value);
+			b.mdf = Number(document.getElementById("bmdf").value);
+
+			if(document.getElementById('bspd'))
+			{
+				b.mmp = Number(document.getElementById("bmmp").value);
+				b.atk = Number(document.getElementById("bdef").value);
+				b.mat = Number(document.getElementById("bmdf").value);
+				b.agi = Number(document.getElementById("bspd").value);
+				b.luk = Number(document.getElementById("bluk").value);
+				b.level = Number(document.getElementById("blvl").value);
+			}
+			else if(localStorage.bspd)
+			{
+				b.mmp = Number(localStorage.bmmp);
+				b.atk = Number(localStorage.bdef);
+				b.mat = Number(localStorage.bmdf);
+				b.agi = Number(localStorage.bspd);
+				b.luk = Number(localStorage.bluk);
+				b.level = Number(localStorage.blvl);
+			}
+			else
+			{
+				b.mmp = 250;
+				b.atk = 50;
+				b.mat = 50;
+				b.agi = 50;
+				b.luk = 50;
+				b.level = 1;
+			}
+
+			var df = String(document.getElementById("df").value);
+
+			var moddedStat = String(document.getElementById("Stats").value);
+			var variance = Number(document.getElementById("vary").value);
+			var element = Number(document.getElementById("elem").value);
+
+			var incrementRate = Number(document.getElementById("rate").value);
+			var incrementCount = Number(document.getElementById("incr").value);
+
+			var positive = document.getElementById("positive");
+			var negative = document.getElementById("negative");
+			var columns = document.getElementById("cols");
+
+			var showVariance = document.getElementById("showVar");
+
+			var result = "<br><font size='5' style='text-decoration: underline'>Results:</font><br>";
+			result += "<br>" + String(df) + "<br><br>";
+
+			var save = "var temp = " + String(moddedStat);
+			eval(save);
+
+			//Results Start
+			result += String(moddedStat) + " + 0 (" + String(eval(moddedStat)) + ")<br>";
+
+			var damage = Math.max(eval(df), 0);
+			damage = damage * (element / 100);
+			var low = lowVariance(damage, variance);
+			var high = highVariance(damage, variance);
+			damage = Math.round(damage);
+
+			var percent = ((damage / b.mhp) * 100).toFixed(1);
+			var percentLow = ((low / b.mhp) * 100).toFixed(1);
+			var percentHigh = ((high / b.mhp) * 100).toFixed(1);
+
+			result += "Damage: " + String(damage) + " (" + String(percent) + "%)<br>";
+			if(showVariance.checked)
+			{
+				result += "Variance: " + String(low) + " ~ " + String(high) + " (" + String(percentLow) + "% ~ " + String(percentHigh) + "%)<br>";
+			}
+			result += "<br>";
+
+			if(positive.checked)
+			{
+				if(negative.checked && columns.checked)
+				{
+					result += "<div style='float: left; width: 50%; background-color:white;'><ul>";
+				}
+
+				result += "<br><font size='4' style='text-decoration: underline'>Positve Incrementation:</font><br><br>";
+				for(var i = 1; i <= incrementCount; i+=1)
+				{
+					var increment = String(moddedStat) + " += (incrementRate)";
+					eval(increment);
+
+					result += String(moddedStat) + " + " + String(incrementRate * i) + " (" + String(eval(moddedStat)) + ")<br>";
+
+					var damage = Math.max(eval(df), 0);
+					damage = damage * (element / 100);
+					var low = lowVariance(damage, variance);
+					var high = highVariance(damage, variance);
+					damage = Math.round(damage);
+
+					var percent = ((damage / b.mhp) * 100).toFixed(1);
+					var percentLow = ((low / b.mhp) * 100).toFixed(1);
+					var percentHigh = ((high / b.mhp) * 100).toFixed(1);
+
+					result += "Damage: " + String(damage) + " (" + String(percent) + "%)<br>";
+					if(showVariance.checked)
+					{
+						result += "Variance: " + String(low) + " ~ " + String(high) + " (" + String(percentLow) + "% ~ " + String(percentHigh) + "%)<br>";
+					}
+					result += "<br>";
+				}
+			}
+
+			var load = String(moddedStat) + " = temp";
+			eval(load);
+
+			if(negative.checked)
+			{
+				if(positive.checked && columns.checked)
+				{
+					result += "</div></ul><div style='float: right; width: 50%; background-color:white;'><ul>";
+				}
+
+				result += "<br><font size='4' style='text-decoration: underline'>Negative Incrementation:</font><br><br>";
+				for(var i = 1; i <= incrementCount; i+=1)
+				{
+					var increment = String(moddedStat) + " -= (incrementRate)";
+					eval(increment);
+					var zeroize = String(moddedStat) + " = Math.max(" + String(moddedStat) + ", 0)";
+					eval(zeroize);
+
+					result += String(moddedStat) + " - " + String(incrementRate * i) + " (" + String(eval(moddedStat)) + ")<br>";
+
+					var damage = Math.max(eval(df), 0);
+					damage = damage * (element / 100);
+					var low = lowVariance(damage, variance);
+					var high = highVariance(damage, variance);
+					damage = Math.round(damage);
+
+					var percent = ((damage / b.mhp) * 100).toFixed(1);
+					var percentLow = ((low / b.mhp) * 100).toFixed(1);
+					var percentHigh = ((high / b.mhp) * 100).toFixed(1);
+
+					result += "Damage: " + String(damage) + " (" + String(percent) + "%)<br>";
+					if(showVariance.checked)
+					{
+						result += "Variance: " + String(low) + " ~ " + String(high) + " (" + String(percentLow) + "% ~ " + String(percentHigh) + "%)<br>";
+					}
+					result += "<br>";
+				}
+			}
+
+			if(positive.checked && negative.checked && columns.checked) result += "</ul></div>";
+
+			document.getElementById('Results').innerHTML = String(result);
+		}
+	</script>
+
+	<head>
+		<title>Damage Calculator</title>
+		<link rel="stylesheet" href="desktop.css" media="screen" />
+		<link rel="stylesheet" href="mobile.css" media="only screen and (max-device width:480px)"/>
+		<meta name="viewport" content="width=320,user-scalable=false" />
+	</head>
+
+	<body>
+
+		<p>
+			<img src="MVLogo.png" alt="RPG Maker MV" width = 400px height = auto>
+		</p>
+
+		<p>
+			<img src="SumRndmDdeLogo3.png" alt="SumRndmDde" width = 400px height = auto>
+		</p>
+
+		<h1>RPG Maker<br>Damage Calculator</h1>
+		<h1>Version: Incomplete</h1>
+		<p style="background-color:white;">
+			<br>
+			Hello!
+			<br>
+			Welcome to a RPG Maker calculator!
+			<br>
+			<br>
+			The following is a calculator for determining how much damage
+			a certain Item or Skill will do when used on a target with specified
+			stats by a user with specified stats. It also calculates how many
+			hits a Battler will need to preform on another Battler
+			while using a certain Skill or Item.
+			<br>
+			<br>
+			This can be used for a varity of testing and balancing 
+			purposes including finding the correct amount of offensive or 
+			defensive stats for your Actors and Enemies or finding the correct Damage Formulas for your Skills and Items.
+			<br>
+			<br>
+			Please enjoy!
+			<br>
+			<br>
+			- SumRndmDde
+			<br>
+			<br>
+			<a href="http://www.youtube.com/SumRndmDde">SumRndmDde's YouTube Channel</a>
+			<br>
+			<br>
+			<a href="http://SumRndmDde.github.io/EXP-Calculator">Experience Calculator</a>
+			<br>
+			<br>
+		</p>
+
+		<section>
+		<p id="Attacker" style="background-color:#6495ED;">
+			<br>
+			<font size="5" style="text-decoration: underline">Attacker:</font>
+			<br>
+			<br>
+			Use the following to set the stats of the Attacker.<br>
+			You only need to set the stats that will be used in your formula.<br>
+			ATK and MAT are shown for convenience, but you can see the rest by using the
+			"Expand" button.
+			<br>
+			<br>
+			ATK:
+			<br>
+			<input type="tel" onchange="getResults()" id="aatk" name="aatk" value="50"><br>
+			<br>
+			MAT:
+			<br>
+			<input type="tel" onchange="getResults()" id="amat" name="amat" value="50"><br>
+			<br>
+			<button onclick='expandAttacker()'>
+				<font size="2">Expand</font>
+			</button>
+			<br>
+			<br>
+		</p>
+		<p id="Defender" style="background-color:#9ACD32;">
+			<br>
+			<font size="5" style="text-decoration: underline">Defender:</font>
+			<br>
+			<br>
+			Use the following to set the stats of the Defender.<br>
+			You only need to set the stats that will be used in your formula. (with the exception of MHP)<br>
+			DEF, MDF, and MHP are shown for convenience, but you can see the rest by using the
+			"Expand" button.
+			<br>
+			<br>
+			MHP:<br>
+			(Please include this)
+			<br>
+			<input type="tel" onchange="getResults()" id="bmhp" name="bmhp" value="500"><br>
+			<br>
+			DEF:
+			<br>
+			<input type="tel" onchange="getResults()" id="bdef" name="bdef" value="50"><br>
+			<br>
+			MDF:
+			<br>
+			<input type="tel" onchange="getResults()" id="bmdf" name="bmdf" value="50"><br>
+			<br>
+			<button onclick="expandDefender()">
+				<font size="2">Expand</font>
+			</button>
+			<br>
+			<br>
+		</p>
+		<p style="background-color:#FF7F50;">
+			<br>
+			<font size="5" style="text-decoration: underline">Damage Formula:</font>
+			<br>
+			<br>
+			Input the Damage Formula of your Item or Skill.
+			<br>
+			<br>
+			Damage Formula:
+			<br>
+			<input onchange="getResults()" id="df" name="df" value="a.atk * 4 - b.def * 2"><br>
+			<br>
+			Variance:
+			<br>
+			<input type="tel" onchange="getResults()" id="vary" name="vary" value="0">%<br>
+			<br>
+			Element Rate:
+			<br>
+			<input type="tel" onchange="getResults()" id="elem" name="elem" value="100">%<br>
+			<br>
+		</p>
+
+		<p style="background-color:#FFA500">
+			<br>
+			<font size="5" style="text-decoration: underline">Stat Varience:</font>
+			<br>
+			<br>
+			Using this section, you can set a range of a certain stat to see an array 
+			of results allowing you to choose whichever stat you see fit.
+			<br>
+			<br>
+			Modded Stat:
+			<br>
+			<select id="Stats" onchange='getResults()'>
+				<option value="a.atk">a.atk</option>
+				<option value="a.mat">a.mat</option>
+  				<option value="">----------</option>
+  				<option value="b.mhp">b.mhp</option>
+  				<option value="b.def">b.def</option>
+  				<option value="b.mdf">b.mdf</option>
+  				<option value="">----------</option>
+  				<option value="a.mhp">a.mhp</option>
+  				<option value="a.mmp">a.mmp</option>
+  				<option value="a.def">a.def</option>
+  				<option value="a.mdf">a.mdf</option>
+  				<option value="a.spd">a.agi</option>
+  				<option value="a.luk">a.luk</option>
+  				<option value="a.level">a.level</option>
+  				<option value="">----------</option>
+  				<option value="b.mmp">b.mmp</option>
+  				<option value="b.atk">b.atk</option>
+  				<option value="b.mat">b.mat</option>
+  				<option value="b.spd">b.agi</option>
+  				<option value="b.luk">b.luk</option>
+  				<option value="b.level">b.level</option>
+			</select>
+			<br>
+			<br>
+			Increment Rate:
+			<br>
+			<input type="tel" onchange="getResults()" id="rate" name="rate" value="10"><br>
+			<br>
+			Number of Increments:
+			<br>
+			<input type="tel" onchange="getResults()" id="incr" name="incr" value="3"><br>
+			<br>
+			<input type="checkbox" name="positive" id="positive" value="positive" onchange='getResults()' checked> Positive Incrementation<br>
+			<input type="checkbox" name="negative" id="negative" value="negative" onchange='getResults()'> Negative Incrementation<br>
+			<br>
+			<input type="checkbox" name="cols" id="cols" value="cols" onchange='getResults()'> Columns<br>
+			<input type="checkbox" name="showVar" id="showVar" value="showVar" onchange='getResults()'> Show Variance<br>
+			<br>
+		</p>
+		</section>
+
+		<aside>
+		<p id="Results" style="background-color:white;">
+			<br>
+			<font size='5' style='text-decoration: underline'>Results:</font>
+			<br>
+			<script>
+				getResults();
+			</script>
+			<br>
+			<br>
+		</p>
+		</aside>
+
+		<p>
+			<br><br>
+			Changelog:<br>
+ 			<br>
+			<font size="3" style='text-decoration: underline'>[Version Incomplete]</font><br>
+ 			Calculator Created<br>
+ 			Still Unsure About Design<br>
+ 			Waiting for More User Input<br>
+ 			<br>
+		</p>
+
+		<p>
+			<br>
+			<br>
+			<br>
+			Found an error?<br>
+			Wish to request something?<br>
+			Please visit me on my YouTube Channel!<br>
+		</p>
+	</body>
+
+	<script>
+	
+	function expandAttacker()
+	{
+		localStorage.aatk = document.getElementById('aatk').value;
+		localStorage.amat = document.getElementById('amat').value;
+
+		document.getElementById('Attacker').innerHTML = '<br><font size="5" style="text-decoration: underline">Attacker:</font><br><br>Use the following to set the stats of the Attacker.<br>You only need to set the stats that will be used in your formula.<br>ATK and MAT are shown for convenience, but you can see the rest by using the "Expand" button.<br><br>ATK:<br><input type="tel" onchange="getResults()" id="aatk" name="aatk" value="50"><br><br>MAT:<br><input type="tel" onchange="getResults()" id="amat" name="amat" value="50"><br><br>MHP:<br><input type="tel" onchange="getResults()" id="amhp" name="amhp" value="500"><br><br>MMP:<br><input type="tel" onchange="getResults()" id="ammp" name="ammp" value="250"><br><br>DEF:<br><input type="tel" onchange="getResults()" id="adef" name="adef" value="50"><br><br>MDF:<br><input type="tel" onchange="getResults()" id="amdf" name="amdf" value="50"><br><br>LUK:<br><input type="tel" onchange="getResults()" id="aluk" name="aluk" value="50"><br><br>AGI:<br><input type="tel" onchange="getResults()" id="aspd" name="aspd" value="50"><br><br>Level:<br><input type="tel" onchange="getResults()" id="alvl" name="alvl" value="1"><br><br><button onclick="contractAttacker()""><font size="2">Contract</font></button><br><br>';
+
+		document.getElementById('aatk').value = localStorage.aatk;
+		document.getElementById('amat').value = localStorage.amat;
+
+		if(localStorage.aspd)
+		{
+			document.getElementById('amhp').value = localStorage.amhp;
+			document.getElementById('ammp').value = localStorage.ammp;
+			document.getElementById('adef').value = localStorage.adef;
+			document.getElementById('amdf').value = localStorage.amdf;
+			document.getElementById('aluk').value = localStorage.aluk;
+			document.getElementById('aspd').value = localStorage.aspd;
+			document.getElementById('alvl').value = localStorage.alvl;
+		}
+	}
+
+	function contractAttacker()
+	{
+		localStorage.amhp = document.getElementById('amhp').value;
+		localStorage.ammp = document.getElementById('ammp').value;
+		localStorage.adef = document.getElementById('adef').value;
+		localStorage.amdf = document.getElementById('amdf').value;
+		localStorage.aluk = document.getElementById('aluk').value;
+		localStorage.aspd = document.getElementById('aspd').value;
+		localStorage.alvl = document.getElementById('alvl').value;
+		localStorage.aatk = document.getElementById('aatk').value;
+		localStorage.amat = document.getElementById('amat').value;
+
+		document.getElementById('Attacker').innerHTML = '<br><font size="5" style="text-decoration: underline">Attacker:</font><br><br>Use the following to set the stats of the Attacker.<br>You only need to set the stats that will be used in your formula.<br>ATK and MAT are shown for convenience, but you can see the rest by using the "Expand" button.<br><br>ATK:<br><input type="tel" onchange="getResults()" id="aatk" name="aatk"><br><br>MAT:<br><input type="tel" onchange="getResults()" id="amat" name="amat"><br><br><button onclick="expandAttacker()""><font size="2">Expand</font></button><br><br>';
+
+		document.getElementById('aatk').value = localStorage.aatk;
+		document.getElementById('amat').value = localStorage.amat;
+	}
+
+	//Defender
+	function expandDefender()
+	{
+		localStorage.bmhp = document.getElementById('bmhp').value;
+		localStorage.bdef = document.getElementById('bdef').value;
+		localStorage.bmdf = document.getElementById('bmdf').value;
+
+		document.getElementById('Defender').innerHTML = '<br><font size="5" style="text-decoration: underline">Defender:</font><br><br>Use the following to set the stats of the Defender.<br>You only need to set the stats that will be used in your formula. (with the exception of MHP)<br>DEF, MDF, and MHP are shown for convenience, but you can see the rest by using the"Expand" button.<br><br>MHP:<br>(Please include this)<br><input type="tel" onchange="getResults()" id="bmhp" name="bmhp" value="500"><br><br>DEF:<br><input type="tel" onchange="getResults()" id="bdef" name="bdef" value="50"><br><br>MDF:<br><input type="tel" onchange="getResults()" id="bmdf" name="bmdf" value="50"><br><br>MMP:<br><input type="tel" onchange="getResults()" id="bmmp" name="bmmp" value="250"><br><br>ATK:<br><input type="tel" onchange="getResults()" id="batk" name="batk" value="50"><br><br>MAT:<br><input type="tel" onchange="getResults()" id="bmat" name="bmat" value="50"><br><br>LUK:<br><input type="tel" onchange="getResults()" id="bluk" name="bluk" value="50"><br><br>AGI:<br><input type="tel" onchange="getResults()" id="bspd" name="bspd" value="50"><br><br>Level:<br><input type="tel" onchange="getResults()" id="blvl" name="blvl" value="1"><br><br><button onclick="contractDefender()"><font size="2">Contract</font></button><br><br>';
+
+		document.getElementById('bmhp').value = localStorage.bmhp;
+		document.getElementById('bdef').value = localStorage.bdef;
+		document.getElementById('bmdf').value = localStorage.bmdf;
+
+		if(localStorage.bspd)
+		{
+			document.getElementById('bmmp').value = localStorage.bmmp;
+			document.getElementById('bdef').value = localStorage.bdef;
+			document.getElementById('bmdf').value = localStorage.bmdf;
+			document.getElementById('bluk').value = localStorage.bluk;
+			document.getElementById('bspd').value = localStorage.bspd;
+			document.getElementById('blvl').value = localStorage.blvl;
+		}
+	}
+
+	function contractDefender()
+	{
+		localStorage.bmhp = document.getElementById('bmhp').value;
+		localStorage.bmmp = document.getElementById('bmmp').value;
+		localStorage.bdef = document.getElementById('bdef').value;
+		localStorage.bmdf = document.getElementById('bmdf').value;
+		localStorage.bluk = document.getElementById('bluk').value;
+		localStorage.bspd = document.getElementById('bspd').value;
+		localStorage.blvl = document.getElementById('blvl').value;
+		localStorage.batk = document.getElementById('batk').value;
+		localStorage.bmat = document.getElementById('bmat').value;
+
+		document.getElementById('Defender').innerHTML = '<br><font size="5" style="text-decoration: underline">Defender:</font><br><br>Use the following to set the stats of the Defender.<br>You only need to set the stats that will be used in your formula. (with the exception of MHP)<br>DEF, MDF, and MHP are shown for convenience, but you can see the rest by using the"Expand" button.<br><br>MHP:<br>(Please include this)<br><input type="tel" onchange="getResults()" id="bmhp" name="bmhp" value="500"><br><br>DEF:<br><input type="tel" onchange="getResults()" id="bdef" name="bdef" value="50"><br><br>MDF:<br><input type="tel" onchange="getResults()" id="bmdf" name="bmdf" value="50"><br><br><button onclick="expandDefender()"><font size="2">Expand</font></button><br><br>';
+
+		document.getElementById('bmhp').value = localStorage.bmhp;
+		document.getElementById('bdef').value = localStorage.bdef;
+		document.getElementById('bmdf').value = localStorage.bmdf;
+	}
+
+	</script>
+
+</html>
