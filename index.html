@@ -149,7 +149,7 @@
 					result += "<div style='float: left; width: 50%; background-color:white;'><ul>";
 				}
 
-				result += "<br><font size='4' style='text-decoration: underline'>Positve Incrementation:</font><br><br>";
+				result += "<br><font size='4' style='text-decoration: underline'>Incrementation:</font><br><br>";
 				for(var i = 1; i <= incrementCount; i+=1)
 				{
 					var increment = String(moddedStat) + " += (incrementRate)";
@@ -186,7 +186,7 @@
 					result += "</div></ul><div style='float: right; width: 50%; background-color:white;'><ul>";
 				}
 
-				result += "<br><font size='4' style='text-decoration: underline'>Negative Incrementation:</font><br><br>";
+				result += "<br><font size='4' style='text-decoration: underline'>Decrementation:</font><br><br>";
 				for(var i = 1; i <= incrementCount; i+=1)
 				{
 					var increment = String(moddedStat) + " -= (incrementRate)";
@@ -395,8 +395,8 @@
 			<br>
 			<input type="tel" onchange="getResults()" id="incr" name="incr" value="3"><br>
 			<br>
-			<input type="checkbox" name="positive" id="positive" value="positive" onchange='getResults()' checked> Positive Incrementation<br>
-			<input type="checkbox" name="negative" id="negative" value="negative" onchange='getResults()'> Negative Incrementation<br>
+			<input type="checkbox" name="positive" id="positive" value="positive" onchange='getResults()' checked> Incrementation<br>
+			<input type="checkbox" name="negative" id="negative" value="negative" onchange='getResults()'> Decrementation<br>
 			<br>
 			<input type="checkbox" name="cols" id="cols" value="cols" onchange='getResults()'> Columns<br>
 			<input type="checkbox" name="showVar" id="showVar" value="showVar" onchange='getResults()'> Show Variance<br>
